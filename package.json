@@ -18,6 +18,7 @@
     "@supabase/supabase-js": "^2.119.0",
     "@tailwindcss/vite": "^4.3.5",
     "@tanstack/react-query": "^5.107.1",
+    "lucide-react": "^1.76.0",
     "mammoth": "^1.13.0",
     "react": "^19.3.1",
     "react-dom": "^19.3.1",

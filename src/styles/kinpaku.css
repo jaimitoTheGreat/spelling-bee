@@ -68,4 +68,32 @@
 
 /* ═══ Barra de progreso ═══ */
 .sb-track { height: 4px; background: var(--graphite2); border-radius: 999px; }
-.sb-fill { height: 4px; background: var(--gold); border-radius: 999px; transition: width .3s; }
+.sb-fill { height: 4px; background: var(--gold); border-radius: 999px; transition: width .3s; }/* Modifica o agrega estas líneas en tu kinpaku.css */
+
+.sb-btn { 
+  display: inline-flex; align-items: center; justify-content: center; gap: 8px; 
+  min-height: 46px; padding: 0 24px; border-radius: 2px; 
+  font: 500 .875rem var(--body); cursor: pointer; 
+  transition: all .15s ease-in-out; /* Transición más suave */
+}
+
+/* Estado al presionar (Active) */
+.sb-btn:active:not(:disabled) { 
+  transform: scale(0.97); 
+}
+
+/* Estado deshabilitado más claro */
+.sb-btn:disabled { 
+  opacity: .5; 
+  cursor: not-allowed; 
+  filter: grayscale(1); /* Se ve gris cuando está bloqueado */
+}
+
+/* Botones de la rúbrica: Más grandes en móvil, tamaño fijo en PC */
+.sb-rubro { 
+  width: 44px; height: 44px; /* Un poco más grandes para dedos */
+  background: var(--graphite); border: 1px solid var(--rule); 
+  border-radius: 4px; font: 600 1rem var(--body); 
+  color: var(--champagne); cursor: pointer; 
+  transition: all .1s;
+}

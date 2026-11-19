@@ -60,32 +60,41 @@ export function ProyeccionPage() {
   return (
     // El onClick en el div principal desbloquea el audio en la primera interacción
     <div className="flex h-screen flex-col bg-[var(--lacquer)] p-8" onClick={desbloquearAudio}>
+      {/* Header */}
       <div className="flex justify-between items-start">
-        <h1 className="sb-display text-4xl sb-champagne">Spelling Bee <span className="sb-gold">Nova</span></h1>
-        <div className="sb-chip sb-chip-patina">Ronda {estado.ronda_actual}</div>
+        <h1 className="sb-display text-3xl md:text-4xl lg:text-5xl sb-champagne">Spelling Bee <span className="sb-gold">Nova</span></h1>
+        <div className="sb-chip sb-chip-patina text-sm md:text-base">Ronda {estado.ronda_actual}</div>
       </div>
 
+      {/* Contenido Principal */}
       <div className="flex flex-1 flex-col items-center justify-center text-center">
-        <div className="flex h-32 w-32 items-center justify-center rounded-md text-4xl font-black mb-8" style={{ background: "var(--gold)", color: "var(--ink)" }}>
+        <div className="flex h-24 w-24 md:h-32 md:w-32 items-center justify-center rounded-md text-3xl md:text-5xl font-black mb-6 md:mb-8" style={{ background: "var(--gold)", color: "var(--ink)" }}>
           {estado.participante?.nombre.substring(0, 2).toUpperCase()}
         </div>
-        <h2 className="sb-display text-6xl sb-champagne mb-4">{estado.participante?.nombre}</h2>
-        <p className="text-xl sb-muted mb-12">{estado.participante?.institucion} · Nivel {estado.participante?.nivel_mcer}</p>
+        
+        {/* Nombre del alumno responsivo */}
+        <h2 className="sb-display text-5xl md:text-7xl lg:text-8xl xl:text-9xl sb-champagne mb-4 leading-tight">
+          {estado.participante?.nombre}
+        </h2>
+        
+        <p className="text-lg md:text-2xl lg:text-3xl sb-muted mb-8 md:mb-12">
+          {estado.participante?.institucion} · Nivel {estado.participante?.nivel_mcer}
+        </p>
 
-        {/* Lógica de estados */}
         {!estado.votacion_abierta ? (
-          <div className="space-y-8">
+          <div className="space-y-8 w-full max-w-4xl">
             {countdown !== null && countdown > 0 ? (
               <div className="space-y-6 animate-pulse">
-                <p className="text-6xl md:text-8xl text-[var(--vermilion)] font-black">🔇 GUARDEN SILENCIO</p>
-                <p className="text-3xl text-[var(--champagne)] font-semibold">Comenzando en {countdown}...</p>
+                <p className="text-5xl md:text-7xl lg:text-9xl text-[var(--vermilion)] font-black tracking-tighter">🔇 GUARDEN SILENCIO</p>
+                <p className="text-3xl md:text-5xl text-[var(--champagne)] font-semibold">Comenzando en {countdown}...</p>
               </div>
             ) : (
               <div className="space-y-6">
-                <p className="text-4xl md:text-5xl text-[var(--patina)] font-bold animate-pulse">
-                  🎤 Escuchando pronunciación...
+                <p className="text-4xl md:text-6xl lg:text-7xl text-[var(--patina)] font-bold animate-pulse">
+                  🎤 Escuchando...
                 </p>
-                <button onClick={() => reproducirPalabra(estado.palabra!.palabra, estado.palabra!.audio_url)} className="sb-btn sb-btn-secondary">
+                {/* Botón grande solo para tablets/celulares */}
+                <button onClick={() => reproducirPalabra(estado.palabra!.palabra, estado.palabra!.audio_url)} className="sb-btn sb-btn-secondary text-xl px-8 py-4">
                   🔊 Repetir Audio
                 </button>
               </div>
@@ -93,7 +102,7 @@ export function ProyeccionPage() {
           </div>
         ) : (
           <div className="space-y-6">
-            <p className="text-4xl md:text-5xl text-[var(--patina)] font-semibold animate-pulse">
+            <p className="text-4xl md:text-6xl lg:text-7xl text-[var(--patina)] font-semibold animate-pulse">
               El jurado está deliberando...
             </p>
           </div>

@@ -98,39 +98,39 @@ const [errorMsg, setErrorMsg] = useState("");
   const totalSel = Object.values(puntos).reduce((a, b) => a + b, 0);
   const completa = CRITERIOS.every(([id]) => puntos[id] !== undefined);
 
-  return (
-    <div className="min-h-screen bg-[var(--lacquer)] p-6 pb-24">
-      <header className="mb-8 flex items-center justify-between mx-auto max-w-4xl">
+    return (
+    <div className="min-h-screen bg-[var(--lacquer)] p-4 md:p-6 pb-24">
+      <header className="mb-6 flex flex-col md:flex-row items-start md:items-center justify-between gap-4 max-w-4xl mx-auto">
         <div>
-          <h1 className="sb-display text-3xl text-[var(--champagne)]">Panel del Juez</h1>
+          <h1 className="sb-display text-2xl md:text-3xl text-[var(--champagne)]">Panel del Juez</h1>
           <p className="sb-mono text-[var(--faint)] mt-1">Sesión de {user?.nombre}</p>
         </div>
-        <button onClick={logout} className="sb-btn sb-btn-secondary sb-btn-sm">Salir</button>
+        <button onClick={logout} className="sb-btn sb-btn-secondary sb-btn-sm w-full md:w-auto">Salir</button>
       </header>
 
       <div className="mx-auto grid max-w-4xl gap-5 md:grid-cols-2">
-        {/* Tarjeta del Alumno y Palabra */}
-        <div className="sb-panel space-y-4 p-6">
+        {/* Tarjeta del Alumno */}
+        <div className="sb-panel space-y-4 p-5 md:p-6">
           <div className="flex items-center gap-4">
             <div className="flex h-14 w-14 items-center justify-center rounded-md text-xl font-bold" style={{ background: "var(--gold)", color: "var(--ink)" }}>
-              {estado.participante?.nombre.charAt(0)}
+              {estado.participante?.nombre.substring(0, 2).toUpperCase()}
             </div>
             <div>
-              <p className="text-lg font-semibold sb-champagne">{estado.participante?.nombre}</p>
-              <p className="text-xs sb-muted">{estado.participante?.institucion}</p>
+              <p className="text-lg font-semibold sb-champagne leading-tight">{estado.participante?.nombre}</p>
+              <p className="text-xs sb-muted mt-1">{estado.participante?.institucion}</p>
             </div>
           </div>
+
           <div className="sb-inset p-4 relative">
             <p className="sb-mono sb-faint">Palabra a evaluar</p>
             <div className="flex justify-between items-center mt-2">
               <div>
-                <p className="sb-display text-4xl sb-gold">{estado.palabra?.palabra}</p>
+                <p className="sb-display text-4xl md:text-5xl sb-gold">{estado.palabra?.palabra}</p>
                 <p className="text-sm font-mono text-[var(--muted)] mt-1">{estado.palabra?.ipa}</p>
               </div>
-              {/* BOTÓN DE AUDIO PARA EL JUEZ */}
               <button 
                 onClick={() => reproducirPalabra(estado.palabra!.palabra, estado.palabra!.audio_url)} 
-                className="sb-btn sb-btn-secondary rounded-full h-10 w-10 p-0 text-lg" 
+                className="sb-btn sb-btn-secondary rounded-full h-12 w-12 p-0 text-xl shrink-0" 
                 title="Escuchar pronunciación"
               >
                 🔊
@@ -139,60 +139,61 @@ const [errorMsg, setErrorMsg] = useState("");
           </div>
           
           {!abierta ? (
-            <p className="sb-inset p-3 text-xs text-[var(--vermilion)] text-center font-semibold">
-              🔒 El participante está deletreando. La votación está bloqueada.
+            <p className="sb-inset p-3 text-xs text-[var(--vermilion)] text-center font-semibold border border-[var(--vermilion)]/30 bg-[var(--vermilion)]/5 rounded">
+              🔒 El participante está deletreando. Votación bloqueada.
             </p>
           ) : (
-            <p className="sb-inset p-3 text-xs text-[var(--patina)] text-center font-semibold">
+            <p className="sb-inset p-3 text-xs text-[var(--patina)] text-center font-semibold border border-[var(--patina)]/30 bg-[var(--patina)]/5 rounded">
               ✅ Participación finalizada. Puedes emitir tu voto.
             </p>
           )}
         </div>
 
         {/* Rúbrica */}
-        <div className="sb-panel space-y-4 p-6">
-          <p className="sb-mono sb-faint">Rúbrica de evaluación · 0–3</p>
-          
-          {CRITERIOS.map(([id, nombre]) => (
-            <div key={id} className="flex items-center justify-between gap-3">
-              <span className="text-sm sb-champagne">{nombre}</span>
-              <div className="flex gap-1.5">
-                {[0, 1, 2, 3].map((p) => (
-                  <button
-                    key={p}
-                    className={`sb-rubro ${puntos[id] === p ? "sb-rubro--sel" : ""}`}
-                    disabled={!abierta || votado}
-                    onClick={() => setPuntos({ ...puntos, [id]: p })}
-                  >
-                    {p}
-                  </button>
-                ))}
+        <div className="sb-panel space-y-5 p-5 md:p-6 flex flex-col justify-between">
+          <div>
+            <p className="sb-mono sb-faint mb-4">Rúbrica de evaluación · 0–3</p>
+            
+            {CRITERIOS.map(([id, nombre]) => (
+              <div key={id} className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3 mb-4">
+                <span className="text-sm sb-champagne font-medium">{nombre}</span>
+                <div className="flex gap-2 w-full sm:w-auto">
+                  {[0, 1, 2, 3].map((p) => (
+                    <button
+                      key={p}
+                      className={`sb-rubro flex-1 sm:flex-none ${puntos[id] === p ? "sb-rubro--sel" : ""}`}
+                      disabled={!abierta || votado}
+                      onClick={() => setPuntos({ ...puntos, [id]: p })}
+                    >
+                      {p}
+                    </button>
+                  ))}
+                </div>
               </div>
-            </div>
-          ))}
-
-          <div className="flex items-center justify-between border-t pt-3" style={{ borderColor: "var(--rule)" }}>
-            <span className="text-xs sb-muted">Total del voto</span>
-            <span className="text-lg font-bold sb-champagne">{totalSel} / 9</span>
+            ))}
           </div>
 
-          {votado ? (
-            <div className="sb-inset flex items-center justify-between p-3" style={{ borderColor: "var(--patina)" }}>
-              <span className="text-sm sb-patina">Voto enviado ✓</span>
-              <button className="sb-link" onClick={() => setEditando(true)}>Editar voto</button>
+          <div>
+            <div className="flex items-center justify-between border-t pt-4 mb-4" style={{ borderColor: "var(--rule)" }}>
+              <span className="text-sm sb-muted font-semibold">Total del voto</span>
+              <span className="text-2xl font-bold sb-gold">{totalSel} / 9</span>
             </div>
-          ) : (
-            <button
-              className="sb-btn sb-btn-primary w-full"
-              disabled={!abierta || !completa || enviarMutation.isPending}
-              onClick={() => enviarMutation.mutate()}
-            >
-              {enviarMutation.isPending ? "Guardando..." : "Enviar voto"}
-              {errorMsg && (
-                <p className="text-xs text-[var(--vermilion)] text-center mt-2">{errorMsg}</p>
-              )}
-            </button>
-          )}
+
+            {votado ? (
+              <div className="sb-inset flex items-center justify-between p-4 rounded-md" style={{ borderColor: "var(--patina)", background: "var(--patina)" + "10" }}>
+                <span className="text-sm font-bold sb-patina">Voto enviado ✓</span>
+                <button className="sb-link" onClick={() => setEditando(true)}>Editar voto</button>
+              </div>
+            ) : (
+              <button
+                className="sb-btn sb-btn-primary w-full text-lg h-14"
+                disabled={!abierta || !completa || enviarMutation.isPending}
+                onClick={() => enviarMutation.mutate()}
+              >
+                {enviarMutation.isPending ? "Guardando..." : "Enviar voto"}
+              </button>
+            )}
+          </div>
         </div>
       </div>
     </div>
