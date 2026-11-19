@@ -1,3 +1,4 @@
+import { HelpCircle } from "lucide-react";
 import { Outlet, NavLink, useNavigate } from "react-router";
 import { useAuth } from "../auth/AuthContext";
 import { useState } from "react";
@@ -88,8 +89,9 @@ export function AppLayout() {
 
           {/* mt-auto empuja este bloque hasta el fondo del menú */}
           <div className="mt-auto pt-4 border-t border-[var(--rule)]">
-            <NavLink to="/ayuda" className={linkClass} onClick={() => setMenuAbierto(false)}>
-              ❓ Ayuda y Soporte
+            <NavLink to="/ayuda" className={`${linkClass} flex items-center gap-2`} onClick={() => setMenuAbierto(false)}>
+              <HelpCircle size={18} />
+              Ayuda y Soporte
             </NavLink>
           </div>
         </aside>

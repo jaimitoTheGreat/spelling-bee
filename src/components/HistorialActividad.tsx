@@ -1,11 +1,12 @@
 import { useQuery } from "@tanstack/react-query";
 import { historialApi } from "../api/historial";
+import { Activity } from "lucide-react";
 
 export function HistorialActividad() {
   const { data: eventos, isLoading } = useQuery({
     queryKey: ["historial"],
     queryFn: historialApi.listar,
-    refetchInterval: 2000, // Respaldo por si falla el WebSocket
+    refetchInterval: 2000,
   });
 
   const getColor = (tipo: string) => {
@@ -24,6 +25,7 @@ export function HistorialActividad() {
           <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-green-400 opacity-75"></span>
           <span className="relative inline-flex rounded-full h-3 w-3 bg-green-500"></span>
         </span>
+        <Activity size={18} className="text-[var(--gold)] ml-1" />
         Historial en Vivo
       </h2>
       

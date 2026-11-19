@@ -1,3 +1,4 @@
+import { MonitorPlay, Skull, Play, Square, RotateCcw, Volume2, Download, AlertTriangle, CheckCircle2, Lock, ArrowRight } from "lucide-react";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { evaluacionApi } from "../../api/evaluacion";
 import { participantesApi } from "../../api/participantes";
@@ -125,13 +126,18 @@ export function DashboardPage() {
           <p className="sb-mono sb-faint mt-1">Panel General en Tiempo Real</p>
         </div>
         <div className="flex flex-wrap gap-2">
-          <a href="/proyeccion" target="_blank" rel="noreferrer" className="sb-btn sb-btn-secondary sb-btn-sm flex-1 sm:flex-none">Proyección ↗</a>
+          <a href="/proyeccion" target="_blank" rel="noreferrer" className="sb-btn sb-btn-secondary sb-btn-sm flex-1 sm:flex-none">
+            <MonitorPlay size={16} className="mr-2"/>
+            Proyección
+          </a>
           <button className={`sb-btn ${estado?.tipo_ronda === 'regular' ? 'sb-btn-primary' : 'sb-btn-secondary'} sb-btn-sm flex-1 sm:flex-none`} onClick={() => cambiarRondaMutation.mutate({ ronda: estado?.ronda_actual || 1, tipo: "regular" })}>Ronda {estado?.ronda_actual || 1}</button>
-          <button className={`sb-btn ${enMuerteSubita ? 'sb-btn-primary' : 'sb-btn-secondary'} sb-btn-sm flex-1 sm:flex-none`} onClick={() => cambiarRondaMutation.mutate({ ronda: estado?.ronda_actual || 1, tipo: "muerte_subita" })}>💀 Muerte Súbita</button>
+          <button className={`sb-btn ${enMuerteSubita ? 'sb-btn-primary' : 'sb-btn-secondary'} sb-btn-sm flex-1 sm:flex-none`} onClick={() => cambiarRondaMutation.mutate({ ronda: estado?.ronda_actual || 1, tipo: "muerte_subita" })}>
+            <Skull size={16} className="mr-2"/>
+            Muerte Súbita
+          </button>
         </div>
       </div>
 
-      {/* GRID PRINCIPAL - Cambiado a xl:grid-cols-2 para que no se aplaste en laptops */}
       <div className="grid gap-6 xl:grid-cols-2">
         
         {/* COLUMNA IZQUIERDA */}
@@ -139,7 +145,10 @@ export function DashboardPage() {
           <div className="sb-panel p-6 space-y-4">
             {enEspera ? (
               <div className="space-y-3">
-                <h2 className="text-lg font-semibold sb-champagne">Iniciar Turno</h2>
+                <h2 className="text-lg font-semibold sb-champagne flex items-center">
+                  <Play size={18} className="mr-2 text-[var(--gold)]"/>
+                  Iniciar Turno
+                </h2>
                 <select className="sb-input" value={participanteSel} onChange={e => setParticipanteSel(e.target.value)}>
                   <option value="">Selecciona participante...</option>
                   {participantes?.data.map(p => <option key={p.id} value={p.id}>{p.nombre}</option>)}
@@ -148,11 +157,12 @@ export function DashboardPage() {
                   <option value="">Selecciona palabra...</option>
                   {palabras?.data.map(p => <option key={p.id} value={p.id}>{p.palabra} ({p.nivel_mcer})</option>)}
                 </select>
-                <button className="sb-btn sb-btn-primary w-full" disabled={!participanteSel || !palabraSel} onClick={() => iniciarMutation.mutate()}>▶ Iniciar Turno</button>
+                <button className="sb-btn sb-btn-primary w-full" disabled={!participanteSel || !palabraSel} onClick={() => iniciarMutation.mutate()}>
+                  <Play size={16} className="mr-2"/> Iniciar Turno
+                </button>
               </div>
             ) : (
               <div className="space-y-4">
-                {/* Tarjeta del Alumno - Flex adaptado para apilarse en móvil */}
                 <div className="sb-inset p-4 flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
                   <div>
                     <p className="sb-mono sb-faint">Alumno en turno</p>
@@ -163,20 +173,27 @@ export function DashboardPage() {
                     onClick={() => reproducirPalabra(estado!.palabra!.palabra, estado!.palabra!.audio_url)} 
                     className="sb-btn sb-btn-secondary sb-btn-sm w-full sm:w-auto"
                   >
-                    🔊 Escuchar
+                    <Volume2 size={16} className="mr-2"/>
+                    Escuchar
                   </button>
                 </div>
 
                 {enTurno ? (
-                  <button className="sb-btn sb-btn-secondary w-full" onClick={() => finalizarMutation.mutate()}>⏹ Finalizar Voto</button>
+                  <button className="sb-btn sb-btn-secondary w-full" onClick={() => finalizarMutation.mutate()}>
+                    <Square size={16} className="mr-2"/> Finalizar Voto
+                  </button>
                 ) : (
                   <div className="space-y-4">
                     <div className={`p-4 rounded border ${votacionCompleta ? 'bg-green-500/10 border-green-500/50' : 'bg-red-500/10 border-red-500/50'}`}>
-                      <p className={`text-sm font-bold ${votacionCompleta ? 'text-green-500' : 'text-red-500'}`}>{votacionCompleta ? '✅ Votación 100% completada' : '🔒 Bloqueo de avance activo'}</p>
+                      <p className={`text-sm font-bold flex items-center gap-2 ${votacionCompleta ? 'text-green-500' : 'text-red-500'}`}>
+                        {votacionCompleta ? <><CheckCircle2 size={16}/> Votación 100% completada</> : <><Lock size={16}/> Bloqueo de avance activo</>}
+                      </p>
                       <p className="text-xs text-[var(--muted)] mt-1">Votos: {votosRecibidos} / {juecesActivos.length}</p>
                       {!votacionCompleta && juecesFaltantes.length > 0 && <p className="text-xs text-[var(--vermilion)] mt-2">Faltan: {juecesFaltantes.map(j => j.nombre).join(", ")}</p>}
                     </div>
-                    <button className="sb-btn sb-btn-primary w-full" disabled={!votacionCompleta || avanzarMutation.isPending} onClick={() => avanzarMutation.mutate()}>Siguiente Turno →</button>
+                    <button className="sb-btn sb-btn-primary w-full" disabled={!votacionCompleta || avanzarMutation.isPending} onClick={() => avanzarMutation.mutate()}>
+                      Siguiente Turno <ArrowRight size={16} className="ml-2"/>
+                    </button>
                   </div>
                 )}
 
@@ -186,7 +203,7 @@ export function DashboardPage() {
                     if(confirm("¿Seguro que quieres reiniciar el turno? Se borrarán los votos actuales.")) reiniciarMutation.mutate();
                   }}
                 >
-                  🔄 Reiniciar Turno
+                  <RotateCcw size={16} className="mr-2"/> Reiniciar Turno
                 </button>
               </div>
             )}
@@ -223,14 +240,17 @@ export function DashboardPage() {
           </div>
 
           <div className="sb-panel p-6">
-            {/* Header de clasificación responsivo */}
             <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 mb-4">
               <h2 className="text-lg font-semibold sb-champagne">Clasificación</h2>
               <div className="flex flex-wrap gap-2 w-full sm:w-auto">
                 {hayEmpateLider && (
-                  <button className="sb-btn sb-btn-primary animate-pulse sb-btn-sm flex-1 sm:flex-none" onClick={() => cambiarRondaMutation.mutate({ ronda: (estado?.ronda_actual || 1) + 1, tipo: "muerte_subita" })}>💀 Desempate</button>
+                  <button className="sb-btn sb-btn-primary animate-pulse sb-btn-sm flex-1 sm:flex-none" onClick={() => cambiarRondaMutation.mutate({ ronda: (estado?.ronda_actual || 1) + 1, tipo: "muerte_subita" })}>
+                    <Skull size={16} className="mr-2"/> Desempate
+                  </button>
                 )}
-                <button onClick={exportarCSV} className="sb-btn sb-btn-secondary sb-btn-sm flex-1 sm:flex-none">⬇ CSV</button>
+                <button onClick={exportarCSV} className="sb-btn sb-btn-secondary sb-btn-sm flex-1 sm:flex-none">
+                  <Download size={16} className="mr-2"/> CSV
+                </button>
               </div>
             </div>
             
@@ -251,7 +271,7 @@ export function DashboardPage() {
                         <td className="p-2 font-mono font-bold">{idx + 1}</td>
                         <td className="p-2 font-semibold sb-champagne">
                           {res.participante.nombre}
-                          {esEmpate && <span className="ml-2 text-xs text-[var(--vermilion)]">⚠️ Empate</span>}
+                          {esEmpate && <span className="ml-2 text-xs text-[var(--vermilion)] inline-flex items-center gap-1"><AlertTriangle size={12}/> Empate</span>}
                         </td>
                         <td className="p-2 text-right font-bold sb-gold">{res.puntajeTotal}</td>
                       </tr>
