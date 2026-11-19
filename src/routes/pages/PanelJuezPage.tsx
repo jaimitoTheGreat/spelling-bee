@@ -4,6 +4,7 @@ import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { evaluacionApi } from "../../api/evaluacion";
 import { CRITERIOS } from "../../types";
 import { reproducirPalabra } from "../../utils/audio";
+import { historialApi } from "../../api/historial";
 
 export function PanelJuezPage() {
   const { user, logout } = useAuth();
@@ -57,10 +58,10 @@ const [errorMsg, setErrorMsg] = useState("");
       criterios: puntos,
       enviado: true,
     }),
-    onSuccess: () => {
+    onSuccess: async () => {
+      await historialApi.registrar(`Juez ${user?.nombre} emitió su voto para ${estado?.participante?.nombre}`, "voto");
       queryClient.invalidateQueries({ queryKey: ["mi-voto"] });
       setEditando(false);
-      setErrorMsg(""); // Limpiamos errores
     },
     onError: (error: any) => {
       console.error(error);

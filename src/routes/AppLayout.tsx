@@ -54,11 +54,12 @@ export function AppLayout() {
         <aside
           className={`
             absolute md:static top-0 left-0 h-full w-64 bg-[var(--deep)] border-r border-[var(--rule)] p-4 z-10
-            transition-transform duration-300
+            transition-transform duration-300 flex flex-col
             ${menuAbierto ? "translate-x-0" : "-translate-x-full md:translate-x-0"}
           `}
         >
-          <nav className="space-y-2">
+          {/* flex-1 hace que esta sección ocupe todo el espacio disponible */}
+          <nav className="space-y-2 flex-1">
             <p className="sb-mono text-[var(--faint)] px-4 mb-4">Navegación</p>
             
             {user?.rol === "organizador" && (
@@ -69,6 +70,12 @@ export function AppLayout() {
                 <NavLink to="/jueces" className={linkClass} onClick={() => setMenuAbierto(false)}>
                   Gestión de Jueces
                 </NavLink>
+                <NavLink to="/participantes" className={linkClass} onClick={() => setMenuAbierto(false)}>
+                  Participantes
+                </NavLink>
+                <NavLink to="/vocabulario" className={linkClass} onClick={() => setMenuAbierto(false)}>
+                  Vocabulario
+                </NavLink>
               </>
             )}
 
@@ -77,14 +84,14 @@ export function AppLayout() {
                 Panel de Evaluación
               </NavLink>
             )}
-
-            <NavLink to="/participantes" className={linkClass} onClick={() => setMenuAbierto(false)}>
-              Participantes
-            </NavLink>
-            <NavLink to="/vocabulario" className={linkClass} onClick={()=>setMenuAbierto(false)}>
-              Vocabulario
-            </NavLink>
           </nav>
+
+          {/* mt-auto empuja este bloque hasta el fondo del menú */}
+          <div className="mt-auto pt-4 border-t border-[var(--rule)]">
+            <NavLink to="/ayuda" className={linkClass} onClick={() => setMenuAbierto(false)}>
+              ❓ Ayuda y Soporte
+            </NavLink>
+          </div>
         </aside>
 
         {/* Capa oscura para móvil cuando el menú está abierto */}

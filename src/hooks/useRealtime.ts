@@ -27,6 +27,14 @@ export function useRealtime() {
           queryClient.invalidateQueries({ queryKey: ["clasificacion"] });
         }
       )
+      // Dentro del useEffect de useRealtime, agrega este .on()
+      .on(
+        "postgres_changes",
+        { event: "INSERT", schema: "public", table: "historial_eventos" },
+        () => {
+          queryClient.invalidateQueries({ queryKey: ["historial"] });
+        }
+      )
       .subscribe();
 
     return () => {

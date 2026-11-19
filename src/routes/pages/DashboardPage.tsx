@@ -6,6 +6,7 @@ import { juecesApi } from "../../api/jueces";
 import { resultadosApi } from "../../api/resultados";
 import { useState } from "react";
 import { reproducirPalabra } from "../../utils/audio";
+import { HistorialActividad } from "../../components/HistorialActividad";
 
 export function DashboardPage() {
   const queryClient = useQueryClient();
@@ -237,6 +238,7 @@ export function DashboardPage() {
                 <button onClick={exportarCSV} className="sb-btn sb-btn-secondary sb-btn-sm">⬇ CSV</button>
               </div>
             </div>
+            <HistorialActividad />
             
             <table className="w-full text-left text-sm">
               <thead className="border-b border-[var(--rule)]">

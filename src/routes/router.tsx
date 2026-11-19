@@ -10,6 +10,7 @@ import { PanelJuezPage } from "./pages/PanelJuezPage";
 import { ParticipantesPage } from "./pages/ParticipantesPage";
 import { VocabularioPage } from "./pages/VocabularioPage";
 import { ProyeccionPage } from "./pages/ProyeccionPage";
+import { AyudaPage } from "./pages/AyudaPage";
 
 export const router = createBrowserRouter([
   { path: "/login", element: <LoginPage /> },
@@ -25,7 +26,7 @@ export const router = createBrowserRouter([
           { path: "/jueces", element: <JuecesPage /> },
           { path: "/participantes", element: <ParticipantesPage />},
           { path: "/vocabulario", element: <VocabularioPage/> },
-          
+          { path: "/ayuda", element: <AyudaPage/> }
         ],
       },
     ],
