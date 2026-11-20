@@ -112,3 +112,24 @@ Sistema integral de gestión de concurso de deletreo (organizador y jueces).
    ```bash
    VITE_SUPABASE_URL=tu_url
    VITE_SUPABASE_ANON_KEY=tu_publishable_key
+
+# Evidencias de Cierre - Sprint IV
+
+## 1. Cumplimiento de Criterios de Aceptación
+
+| Criterio | Descripción | Estado | Evidencia |
+| :--- | :--- | :--- | :--- |
+| **PT-28** | Enlace de Ayuda abre documentación desde cualquier módulo. | ✅ Completado | `AppLayout.tsx` (Sidebar), `AyudaPage.tsx`, prueba `Ayuda.test.tsx`. |
+| **PT-29** | Panel general registra acciones cronológicas sin retrasos. | ✅ Completado | Componente `HistorialActividad.tsx` conectado por WebSockets a Supabase. |
+| **PT-30** | Guía de estilos visuales (tipografías, botones, colores). | ✅ Completado | `kinpaku.css` (Tokens), integración de iconos `lucide-react`. |
+
+## 2. Simulacro de Red Local (5 Jueces)
+Se realizó un simulacro exitoso con un servidor local (`npm run dev -- --host`) y 5 dispositivos conectados a la misma red Wi-Fi.
+- **Latencia de votos:** < 1 segundo (gracias a Supabase Realtime).
+- **Sincronización de Proyección:** El aviso de "Guardar Silencio" y el audio se reprodujeron en tiempo real en la pantalla del auditorio.
+- **Bloqueo del 100%:** El sistema impidió avanzar de turno hasta que los 5 dispositivos emitieron su voto.
+
+## 3. Auditoría de Usabilidad y Responsividad
+- **Computadora:** Interfaz fluida, menú lateral fijo, tablas con scroll independiente.
+- **Tablet / Celular:** El menú lateral se transforma en un menú "hamburguesa" (drawer). Los botones de la rúbrica del juez (0-3) se apilan en formato de cuadrícula para facilitar el toque con el dedo.
+- **Proyector:** La vista de proyección pública escala dinámicamente (`text-9xl`) para que el nombre del alumno y los avisos sean legibles desde el fondo del auditorio.

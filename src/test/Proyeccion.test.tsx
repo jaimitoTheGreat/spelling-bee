@@ -18,6 +18,7 @@ describe("Pantalla Pública - PT-25", () => {
       palabra_actual_id: "2",
       votacion_abierta: false,
       ronda_actual: 1,
+      updated_at: new Date().toISOString(),
       participante: { nombre: "Ana Sofía", institucion: "UNAM", nivel_mcer: "B1" },
       palabra: { palabra: "necessary", ipa: "/necesary/", audio_url: null },
     });
@@ -28,15 +29,15 @@ describe("Pantalla Pública - PT-25", () => {
       </QueryClientProvider>
     );
 
-    // Verifica que el alumno SÍ se vea
+    // 1. Verifica que el alumno SÍ se vea
     const nombre = await screen.findByText("Ana Sofía");
     expect(nombre).toBeInTheDocument();
 
-    // Verifica que la palabra "necessary" NO esté en pantalla
+    // 2. Verifica que la palabra "necessary" NO esté en pantalla
     const palabraOculta = screen.queryByText("necessary");
     expect(palabraOculta).not.toBeInTheDocument();
     
-    // Verifica que muestre el texto de "Escuchando pronunciación..."
-    expect(screen.getByText(/Escuchando pronunciación/i)).toBeInTheDocument();
+    // 3. Verifica que muestre el aviso de silencio inicial
+    expect(screen.getByText(/GUARDEN SILENCIO/i)).toBeInTheDocument();
   });
 });
