@@ -94,31 +94,44 @@ export function ParticipantesPage() {
 
       <div className="sb-panel p-6">
         <h2 className="text-lg font-semibold sb-champagne mb-4">Registrar Participante</h2>
-        <form onSubmit={handleSubmit(onSubmit)} className="flex flex-col md:flex-row gap-3 items-start w-full">
-          <input {...register("nombre")} className="sb-input flex-1 min-w-[150px]" placeholder="Nombre completo" />
-          <input {...register("institucion")} className="sb-input flex-1 min-w-[150px]" placeholder="Institución / Plantel" />
-          <select {...register("nivel_mcer")} className="sb-input w-full md:w-32">
-            {["A1", "A2", "B1", "B2", "C1", "C2"].map(n => <option key={n} value={n}>{n}</option>)}
-          </select>
-          <button type="submit" className="sb-btn sb-btn-primary w-full md:w-auto whitespace-nowrap" disabled={crearMutation.isPending}>
-            {crearMutation.isPending ? "Guardando..." : "Registrar"}
-          </button>
+                <form onSubmit={handleSubmit(onSubmit)} className="grid grid-cols-1 md:grid-cols-12 gap-3 w-full">
+          <div className="md:col-span-4">
+            <input {...register("nombre")} className="sb-input w-full" placeholder="Nombre completo" />
+          </div>
+          <div className="md:col-span-4">
+            <input {...register("institucion")} className="sb-input w-full" placeholder="Institución / Plantel" />
+          </div>
+          <div className="md:col-span-2">
+            <select {...register("nivel_mcer")} className="sb-input w-full">
+              {["A1", "A2", "B1", "B2", "C1", "C2"].map(n => <option key={n} value={n}>{n}</option>)}
+            </select>
+          </div>
+          <div className="md:col-span-2">
+            <button type="submit" className="sb-btn sb-btn-primary w-full h-full" disabled={crearMutation.isPending}>
+              {crearMutation.isPending ? "Guardando..." : "Registrar"}
+            </button>
+          </div>
         </form>
       </div>
 
-      <div className="sb-panel">
-        <div className="p-4 border-b border-[var(--rule)] flex flex-col md:flex-row gap-3">
-          <input type="text" placeholder="Buscar por nombre..." className="sb-input flex-1 min-w-[200px]" value={search} onChange={(e) => { setSearch(e.target.value); setPage(1); }} />
-          <select className="sb-input w-full md:w-48" value={filtroNivel} onChange={(e) => { setFiltroNivel(e.target.value as NivelMCER); setPage(1); }}>
-            <option value="">Todos los niveles</option>
-            {["A1", "A2", "B1", "B2", "C1", "C2"].map(n => <option key={n} value={n}>Nivel {n}</option>)}
-          </select>
-          <select className="sb-input w-full md:w-48" value={filtroEstado} onChange={(e) => { setFiltroEstado(e.target.value as EstadoParticipante); setPage(1); }}>
-            <option value="">Todos los estados</option>
-            <option value="activo">Activos</option>
-            <option value="clasificado">Clasificados</option>
-            <option value="eliminado">Eliminados</option>
-          </select>
+              <div className="p-4 border-b border-[var(--rule)] grid grid-cols-1 md:grid-cols-12 gap-3">
+          <div className="md:col-span-6">
+            <input type="text" placeholder="Buscar por nombre..." className="sb-input w-full" value={search} onChange={(e) => { setSearch(e.target.value); setPage(1); }} />
+          </div>
+          <div className="md:col-span-3">
+            <select className="sb-input w-full" value={filtroNivel} onChange={(e) => { setFiltroNivel(e.target.value as NivelMCER); setPage(1); }}>
+              <option value="">Todos los niveles</option>
+              {["A1", "A2", "B1", "B2", "C1", "C2"].map(n => <option key={n} value={n}>Nivel {n}</option>)}
+            </select>
+          </div>
+          <div className="md:col-span-3">
+            <select className="sb-input w-full" value={filtroEstado} onChange={(e) => { setFiltroEstado(e.target.value as EstadoParticipante); setPage(1); }}>
+              <option value="">Todos los estados</option>
+              <option value="activo">Activos</option>
+              <option value="clasificado">Clasificados</option>
+              <option value="eliminado">Eliminados</option>
+            </select>
+          </div>
         </div>
 
         <div className="overflow-x-auto">
@@ -171,6 +184,5 @@ export function ParticipantesPage() {
           </div>
         </div>
       </div>
-    </div>
   );
 }

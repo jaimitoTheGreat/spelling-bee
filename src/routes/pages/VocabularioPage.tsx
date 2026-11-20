@@ -97,24 +97,38 @@ export function VocabularioPage() {
 
       <div className="sb-panel p-6">
         <h2 className="text-lg font-semibold sb-champagne mb-4">Agregar Palabra Manual</h2>
-        <form onSubmit={handleSubmit(d => crearMutation.mutate(d))} className="flex flex-col md:flex-row gap-3 items-start w-full">
-          <input {...register("palabra", { required: true })} className="sb-input flex-1 min-w-[120px]" placeholder="Palabra en inglés" />
-          <input {...register("ipa", { required: true })} className="sb-input flex-1 min-w-[120px]" placeholder="Fonética IPA" />
-          <input {...register("audio_url")} className="sb-input flex-1 min-w-[150px]" placeholder="URL audio (opcional)" />
-          <select {...register("nivel_mcer", { required: true })} className="sb-input w-full md:w-40" defaultValue="Fácil">
-            {NIVELES.map(n => <option key={n} value={n}>{n}</option>)}
-          </select>
-          <button type="submit" className="sb-btn sb-btn-primary w-full md:w-auto whitespace-nowrap">Agregar</button>
+                <form onSubmit={handleSubmit(d => crearMutation.mutate(d))} className="grid grid-cols-1 md:grid-cols-12 gap-3 w-full">
+          <div className="md:col-span-3">
+            <input {...register("palabra", { required: true })} className="sb-input w-full" placeholder="Palabra en inglés" />
+          </div>
+          <div className="md:col-span-3">
+            <input {...register("ipa", { required: true })} className="sb-input w-full" placeholder="Fonética IPA" />
+          </div>
+          <div className="md:col-span-2">
+            <input {...register("audio_url")} className="sb-input w-full" placeholder="URL audio (opc)" />
+          </div>
+          <div className="md:col-span-2">
+            <select {...register("nivel_mcer", { required: true })} className="sb-input w-full" defaultValue="Fácil">
+              {NIVELES.map(n => <option key={n} value={n}>{n}</option>)}
+            </select>
+          </div>
+          <div className="md:col-span-2">
+            <button type="submit" className="sb-btn sb-btn-primary w-full h-full whitespace-nowrap">Agregar</button>
+          </div>
         </form>
       </div>
 
       <div className="sb-panel">
-        <div className="p-4 border-b border-[var(--rule)] flex flex-col md:flex-row gap-3">
-          <input type="text" placeholder="Buscar palabra..." className="sb-input flex-1 min-w-[200px]" value={search} onChange={(e) => { setSearch(e.target.value); setPage(1); }} />
-          <select className="sb-input w-full md:w-48" value={filtroNivel} onChange={(e) => { setFiltroNivel(e.target.value as NivelDificultad); setPage(1); }}>
-            <option value="">Todos los niveles</option>
-            {NIVELES.map(n => <option key={n} value={n}>{n}</option>)}
-          </select>
+                <div className="p-4 border-b border-[var(--rule)] grid grid-cols-1 md:grid-cols-12 gap-3">
+          <div className="md:col-span-8">
+            <input type="text" placeholder="Buscar palabra..." className="sb-input w-full" value={search} onChange={(e) => { setSearch(e.target.value); setPage(1); }} />
+          </div>
+          <div className="md:col-span-4">
+            <select className="sb-input w-full" value={filtroNivel} onChange={(e) => { setFiltroNivel(e.target.value as NivelDificultad); setPage(1); }}>
+              <option value="">Todos los niveles</option>
+              {NIVELES.map(n => <option key={n} value={n}>{n}</option>)}
+            </select>
+          </div>
         </div>
 
         <div className="overflow-x-auto">
