@@ -1,10 +1,10 @@
 import { supabase } from "../lib/supabase";
-import type { Palabra, NivelMCER } from "../types";
+import type{ Palabra, NivelDificultad } from "../types";
 
 export const vocabularioApi = {
   listar: async (params: {
     search?: string;
-    nivel?: NivelMCER | "";
+    nivel?: NivelDificultad| "";
     page: number;
     limit: number;
   }) => {

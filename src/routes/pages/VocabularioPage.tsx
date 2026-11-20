@@ -2,9 +2,10 @@ import { useState, useDeferredValue } from "react";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { useForm } from "react-hook-form";
 import { vocabularioApi } from "../../api/vocabulario";
-import { reproducirPalabra } from "../../utils/audio"; // <-- IMPORT CORREGIDO
+import { reproducirPalabra } from "../../utils/audio";
 import { parseArchivo } from "../../utils/fileParser";
-import type { NivelMCER, Palabra } from "../../types";
+import type { NivelDificultad, Palabra } from "../../types"; // <-- Cambiado a NivelDificultad
+import { Volume2 } from "lucide-react";
 
 const LIMIT = 10;
 
@@ -12,7 +13,7 @@ export function VocabularioPage() {
   const queryClient = useQueryClient();
   const [page, setPage] = useState(1);
   const [search, setSearch] = useState("");
-  const [filtroNivel, setFiltroNivel] = useState<NivelMCER | "">("");
+  const [filtroNivel, setFiltroNivel] = useState<NivelDificultad | "">(""); // <-- Cambiado
   const [palabraSeleccionada, setPalabraSeleccionada] = useState<Palabra | null>(null);
   
   const [modalImportar, setModalImportar] = useState(false);
@@ -69,13 +70,14 @@ export function VocabularioPage() {
     }
   };
 
-  // Usamos la nueva función unificada
   const handleReproducir = (p: Palabra) => {
     reproducirPalabra(p.palabra, p.audio_url);
   };
 
   const totalPages = lista?.total ? Math.ceil(lista.total / LIMIT) : 1;
-  const NIVELES: NivelMCER[] = ["A1", "A2", "B1", "B2", "C1", "C2", "Muerte Súbita"];
+  
+  // AQUÍ ESTÁN LOS NUEVOS NIVELES
+  const NIVELES: NivelDificultad[] = ["Fácil", "Medio", "Difícil", "Extremo", "Muerte Súbita"];
 
   return (
     <div className="space-y-6 relative">
@@ -99,7 +101,7 @@ export function VocabularioPage() {
           <input {...register("palabra", { required: true })} className="sb-input flex-1 min-w-[120px]" placeholder="Palabra en inglés" />
           <input {...register("ipa", { required: true })} className="sb-input flex-1 min-w-[120px]" placeholder="Fonética IPA" />
           <input {...register("audio_url")} className="sb-input flex-1 min-w-[150px]" placeholder="URL audio (opcional)" />
-          <select {...register("nivel_mcer", { required: true })} className="sb-input w-full md:w-40">
+          <select {...register("nivel_mcer", { required: true })} className="sb-input w-full md:w-40" defaultValue="Fácil">
             {NIVELES.map(n => <option key={n} value={n}>{n}</option>)}
           </select>
           <button type="submit" className="sb-btn sb-btn-primary w-full md:w-auto whitespace-nowrap">Agregar</button>
@@ -109,7 +111,7 @@ export function VocabularioPage() {
       <div className="sb-panel">
         <div className="p-4 border-b border-[var(--rule)] flex flex-col md:flex-row gap-3">
           <input type="text" placeholder="Buscar palabra..." className="sb-input flex-1 min-w-[200px]" value={search} onChange={(e) => { setSearch(e.target.value); setPage(1); }} />
-          <select className="sb-input w-full md:w-48" value={filtroNivel} onChange={(e) => { setFiltroNivel(e.target.value as NivelMCER); setPage(1); }}>
+          <select className="sb-input w-full md:w-48" value={filtroNivel} onChange={(e) => { setFiltroNivel(e.target.value as NivelDificultad); setPage(1); }}>
             <option value="">Todos los niveles</option>
             {NIVELES.map(n => <option key={n} value={n}>{n}</option>)}
           </select>
@@ -136,7 +138,9 @@ export function VocabularioPage() {
                     <span className={`sb-chip ${p.usado ? 'sb-chip-patina' : ''}`}>{p.usado ? 'Utilizada' : 'Sin usar'}</span>
                   </td>
                   <td className="p-4 text-right">
-                    <button onClick={(e) => { e.stopPropagation(); handleReproducir(p); }} className="sb-link">🔊 Escuchar</button>
+                    <button onClick={(e) => { e.stopPropagation(); handleReproducir(p); }} className="sb-link flex items-center gap-1 justify-end ml-auto">
+                      <Volume2 size={16} /> Escuchar
+                    </button>
                   </td>
                 </tr>
               ))}
@@ -163,10 +167,12 @@ export function VocabularioPage() {
             <h1 className="sb-display text-5xl sb-gold mb-2">{palabraSeleccionada.palabra}</h1>
             <p className="text-2xl font-mono text-[var(--champagne)]">{palabraSeleccionada.ipa}</p>
             <div className="mt-8 space-y-4">
-              <div className="sb-inset p-4"><p className="sb-mono sb-faint mb-2">Nivel MCER</p><span className="sb-chip sb-chip-gold">{palabraSeleccionada.nivel_mcer}</span></div>
+              <div className="sb-inset p-4"><p className="sb-mono sb-faint mb-2">Nivel de Dificultad</p><span className="sb-chip sb-chip-gold">{palabraSeleccionada.nivel_mcer}</span></div>
               <div className="sb-inset p-4 flex items-center justify-between">
                 <div><p className="sb-mono sb-faint mb-1">Audio de Pronunciación</p><p className="text-xs text-[var(--muted)]">{palabraSeleccionada.audio_url ? 'Archivo externo' : 'Generado por TTS'}</p></div>
-                <button onClick={() => handleReproducir(palabraSeleccionada)} className="sb-btn sb-btn-primary sb-btn-sm">▶ Reproducir</button>
+                <button onClick={() => handleReproducir(palabraSeleccionada)} className="sb-btn sb-btn-primary sb-btn-sm flex items-center gap-2">
+                  <Volume2 size={16} /> Reproducir
+                </button>
               </div>
             </div>
           </div>
@@ -179,7 +185,7 @@ export function VocabularioPage() {
             <h2 className="text-xl font-semibold sb-champagne mb-2">Importar Vocabulario</h2>
             <p className="text-sm text-[var(--muted)] mb-6">
               Sube un archivo CSV, Excel, Word o JSON. Columnas requeridas: <br/>
-              <code className="text-xs text-[var(--gold)]">palabra</code>, <code className="text-xs text-[var(--gold)]">ipa</code>, <code className="text-xs text-[var(--gold)]">nivel_mcer</code>.
+              <code className="text-xs text-[var(--gold)]">palabra</code>, <code className="text-xs text-[var(--gold)]">ipa</code>, <code className="text-xs text-[var(--gold)]">nivel_mcer</code> (Fácil, Medio, etc).
             </p>
             
             <input 

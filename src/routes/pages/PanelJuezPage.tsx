@@ -14,6 +14,7 @@ export function PanelJuezPage() {
   const [puntos, setPuntos] = useState<Record<string, number>>({});
   const [editando, setEditando] = useState(false);
   const [errorMsg, setErrorMsg] = useState("");
+  const [cargadoInicial, setCargadoInicial] = useState(false);
 
   const { data: estado, isLoading } = useQuery({
     queryKey: ["estado-concurso-juez"],
@@ -27,21 +28,25 @@ export function PanelJuezPage() {
     enabled: !!user?.id && !!estado?.participante_actual_id,
   });
 
+  // 1. Cuando cambia el participante, reseteamos todo
   useEffect(() => {
     setPuntos({});
     setEditando(false);
     setErrorMsg("");
+    setCargadoInicial(false);
   }, [estado?.participante_actual_id]);
 
+  // 2. Solo cargamos el voto de la BD la primera vez, para no sobrescribir los clics
   useEffect(() => {
-    if (miVoto && !editando) {
-      setPuntos(miVoto.criterios);
-    } 
-    else if (!estado?.votacion_abierta) {
-      setPuntos({});
-      setEditando(false);
+    if (miVoto && miVoto.criterios && !cargadoInicial) {
+      const criteriosParseados: Record<string, number> = {};
+      Object.keys(miVoto.criterios).forEach((key) => {
+        criteriosParseados[key] = Number(miVoto.criterios[key]);
+      });
+      setPuntos(criteriosParseados);
+      setCargadoInicial(true);
     }
-  }, [miVoto, editando, estado?.votacion_abierta]);
+  }, [miVoto, cargadoInicial]);
 
   const enviarMutation = useMutation({
     mutationFn: () => evaluacionApi.guardarVoto({
@@ -79,7 +84,7 @@ export function PanelJuezPage() {
   const totalSel = Object.values(puntos).reduce((a, b) => a + b, 0);
   const completa = CRITERIOS.every(([id]) => puntos[id] !== undefined);
 
-    return (
+  return (
     <div className="min-h-screen bg-[var(--lacquer)] p-4 md:p-6 pb-24">
       <header className="mb-6 flex flex-col md:flex-row items-start md:items-center justify-between gap-4 max-w-4xl mx-auto">
         <div>
@@ -111,10 +116,11 @@ export function PanelJuezPage() {
               </div>
               <button 
                 onClick={() => reproducirPalabra(estado.palabra!.palabra, estado.palabra!.audio_url)} 
-                className="sb-btn sb-btn-secondary rounded-full h-12 w-12 p-0 shrink-0" 
+                className="sb-btn sb-btn-secondary !p-0 flex items-center justify-center shrink-0" 
+                style={{ width: '48px', height: '48px', borderRadius: '50%' }}
                 title="Escuchar pronunciación"
               >
-                <Volume2 size={24} />
+                <Volume2 size={24} className="text-[var(--patina)]" />
               </button>
             </div>
           </div>
@@ -142,9 +148,18 @@ export function PanelJuezPage() {
                   {[0, 1, 2, 3].map((p) => (
                     <button
                       key={p}
-                      className={`sb-rubro flex-1 sm:flex-none ${puntos[id] === p ? "sb-rubro--sel" : ""}`}
+                      className="sb-rubro flex-1 sm:flex-none"
+                      style={{
+                        background: Number(puntos[id]) === p ? "var(--gold)" : "var(--graphite)",
+                        color: Number(puntos[id]) === p ? "var(--ink)" : "var(--champagne)",
+                        borderColor: Number(puntos[id]) === p ? "var(--gold-rich)" : "var(--rule)",
+                        opacity: (!abierta || votado) ? 0.5 : 1
+                      }}
                       disabled={!abierta || votado}
-                      onClick={() => setPuntos({ ...puntos, [id]: p })}
+                      onClick={() => {
+                        console.log(`Clic en ${id}: ${p}`);
+                        setPuntos((prev) => ({ ...prev, [id]: Number(p) }));
+                      }}
                     >
                       {p}
                     </button>
@@ -162,6 +177,12 @@ export function PanelJuezPage() {
 
             {errorMsg && (
               <p className="text-xs text-[var(--vermilion)] text-center mb-3">{errorMsg}</p>
+            )}
+
+            {!abierta && (
+              <p className="text-xs text-[var(--vermilion)] text-center mb-3 font-semibold">
+                Debes esperar a que el organizador habilite la votación.
+              </p>
             )}
 
             {votado ? (
