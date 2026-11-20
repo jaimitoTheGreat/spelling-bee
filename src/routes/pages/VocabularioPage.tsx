@@ -97,23 +97,20 @@ export function VocabularioPage() {
 
       <div className="sb-panel p-6">
         <h2 className="text-lg font-semibold sb-champagne mb-4">Agregar Palabra Manual</h2>
-                <form onSubmit={handleSubmit(d => crearMutation.mutate(d))} className="grid grid-cols-1 md:grid-cols-12 gap-3 w-full">
-          <div className="md:col-span-3">
+                  <form onSubmit={handleSubmit(d => crearMutation.mutate(d))} className="grid grid-cols-1 md:grid-cols-12 gap-3 w-full">
+          <div className="md:col-span-4">
             <input {...register("palabra", { required: true })} className="sb-input w-full" placeholder="Palabra en inglés" />
           </div>
-          <div className="md:col-span-3">
-            <input {...register("ipa", { required: true })} className="sb-input w-full" placeholder="Fonética IPA" />
+          <div className="md:col-span-4">
+            <input {...register("ipa", { required: true })} className="sb-input w-full" placeholder="Fonética IPA (ej. /kjuː/)" />
           </div>
           <div className="md:col-span-2">
-            <input {...register("audio_url")} className="sb-input w-full" placeholder="URL audio (opc)" />
-          </div>
-          <div className="md:col-span-2">
-            <select {...register("nivel_mcer", { required: true })} className="sb-input w-full" defaultValue="Fácil">
+            <select {...register("nivel_mcer", { required: true })} className="sb-input w-full !px-2 text-center" defaultValue="Fácil">
               {NIVELES.map(n => <option key={n} value={n}>{n}</option>)}
             </select>
           </div>
           <div className="md:col-span-2">
-            <button type="submit" className="sb-btn sb-btn-primary w-full h-full whitespace-nowrap">Agregar</button>
+            <button type="submit" className="sb-btn sb-btn-primary w-full h-full !px-2">Agregar</button>
           </div>
         </form>
       </div>

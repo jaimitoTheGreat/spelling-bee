@@ -29,36 +29,43 @@ export async function parseArchivo(file: File): Promise<PalabraImportada[]> {
     return rows.map((row) => ({
       palabra: row.palabra || row.Palabra || row.PALABRA || row.word || "",
       ipa: row.ipa || row.IPA || row.fonetica || "",
-      nivel_mcer: row.nivel_mcer || row.Nivel || row.nivel || "A1",
+      nivel_mcer: row.nivel_mcer || row.Nivel || row.nivel || "Fácil",
       audio_url: row.audio_url || row.audio || null,
-    })).filter(p => p.palabra && p.ipa); // Filtramos los que no tengan palabra o IPA
+    })).filter(p => p.palabra && p.ipa); 
   }
 
-  // 3. Manejo de Word (.docx)
+  // 3. Manejo de Word (.docx) leyendo tablas reales
   if (extension === "docx") {
     const arrayBuffer = await file.arrayBuffer();
-    const result = await mammoth.extractRawText({ arrayBuffer });
-    const text = result.value;
     
-    // Asumimos que cada línea es: palabra, ipa, nivel, [audio_url] (separados por coma o tab)
-    const lines = text.split("\n").filter((l) => l.trim().length > 0);
+    // Convertimos a HTML en lugar de texto plano
+    const result = await mammoth.convertToHtml({ arrayBuffer });
+    const html = result.value;
+
+    const parser = new DOMParser();
+    const doc = parser.parseFromString(html, "text/html");
+    const rows = Array.from(doc.querySelectorAll("tr")); // Buscamos filas de tabla
+    
     const parsed: PalabraImportada[] = [];
 
-    for (const line of lines) {
-      // Evitar procesar encabezados
-      if (line.toLowerCase().includes("palabra") && line.toLowerCase().includes("nivel")) continue;
-      
-      const parts = line.split(/[,\t]/).map(p => p.trim());
-      if (parts.length >= 3) {
-        parsed.push({
-          palabra: parts[0],
-          ipa: parts[1],
-          nivel_mcer: parts[2],
-          audio_url: parts[3] || null,
-        });
+    // Si encontró una tabla válida (más de 1 fila contando la cabecera)
+    if (rows.length > 1) {
+      for (let i = 1; i < rows.length; i++) {
+        const cells = Array.from(rows[i].querySelectorAll("td"));
+        if (cells.length >= 3) {
+          parsed.push({
+            palabra: cells[0].textContent?.trim() || "",
+            ipa: cells[1].textContent?.trim() || "",
+            nivel_mcer: cells[2].textContent?.trim() || "Fácil",
+            audio_url: cells[3]?.textContent?.trim() || null,
+          });
+        }
       }
+      return parsed.filter(p => p.palabra && p.ipa);
     }
-    return parsed;
+
+    // Si no encontró tabla, es porque el Word era texto suelto
+    throw new Error("El archivo Word debe contener una Tabla con las columnas: palabra, ipa, nivel_mcer.");
   }
 
   throw new Error("Formato no soportado. Usa .json, .csv, .xlsx o .docx");
